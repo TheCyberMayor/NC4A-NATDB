@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const admin = require('firebase-admin');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -7,7 +7,41 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
+// Initialize Firebase Admin SDK
+try {
+    if (process.env.NODE_ENV === 'production') {
+        // On Render, use the base64-encoded environment variable
+        const serviceAccountBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+        if (!serviceAccountBase64) {
+            throw new Error('FIREBASE_SERVICE_ACCOUNT_BASE64 environment variable not set.');
+        }
+        const serviceAccountJson = Buffer.from(serviceAccountBase64, 'base64').toString('ascii');
+        const serviceAccount = JSON.parse(serviceAccountJson);
+
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+        console.log('Firebase Admin SDK initialized for production.');
+    } else {
+        // In development, use the local file
+        const serviceAccount = require('./firebase-service-account.json');
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+        console.log('Firebase Admin SDK initialized for development.');
+    }
+} catch (error) {
+    console.error('Firebase initialization error:', error.message);
+    process.exit(1);
+}
+
+const db = admin.firestore();
+
 const app = express();
+
+// Trust the first proxy in front of the app, which is Render's.
+// This is needed for express-rate-limit to work correctly.
+app.set('trust proxy', 1);
 
 // Import routes
 const officerRoutes = require('./routes/officers');
@@ -90,35 +124,20 @@ app.use((err, req, res, next) => {
     });
 });
 
-// MongoDB Connection
-const connectDB = async () => {
-    try {
-        const conn = await mongoose.connect(process.env.MONGODB_URI);
-        
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
-        console.log(`Database: ${conn.connection.name}`);
-    } catch (error) {
-        console.error(`Error: ${error.message}`);
-        process.exit(1);
-    }
-};
-
 // Start server
 const PORT = process.env.PORT || 5000;
 
-connectDB().then(() => {
-    app.listen(PORT, () => {
-        console.log(`
+app.listen(PORT, () => {
+    console.log(`
 ╔════════════════════════════════════════════════════════╗
 ║   CADETN National Database Server                      ║
 ║   Directorate of ICT                                   ║
 ╠════════════════════════════════════════════════════════╣
 ║   Server running on port: ${PORT}                     ║
-║   Environment: ${process.env.NODE_ENV}                        ║
+║   Environment: ${process.env.NODE_ENV || 'development'}                        ║
 ║   URL: http://localhost:${PORT}                       ║
 ╚════════════════════════════════════════════════════════╝
-        `);
-    });
+    `);
 });
 
 // Handle unhandled promise rejections
@@ -134,4 +153,4 @@ process.on('SIGTERM', () => {
     process.exit(0);
 });
 
-module.exports = app;
+module.exports = { db };

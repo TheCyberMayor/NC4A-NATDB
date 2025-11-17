@@ -1,5 +1,22 @@
-const Officer = require('../models/Officer');
+const { db } = require('../server');
 const { validationResult } = require('express-validator');
+
+// Define the valid ranks (same as before)
+const VALID_RANKS = [
+    'Air Commodore',
+    'Group Captain',
+    'Wing Commander',
+    'Squadron Leader',
+    'Flight Lieutenant',
+    'Flying Officer',
+    'Pilot Officer',
+    'Warrant Officer',
+    'Flight Sergeant',
+    'Sergeant',
+    'Corporal',
+    'Lance Corporal',
+    'Aircraftman/Aircraftwoman'
+];
 
 // @desc    Submit officer data
 // @route   POST /api/officers
@@ -15,23 +32,48 @@ exports.createOfficer = async (req, res) => {
             });
         }
 
-        // Check if officer already exists
-        const existingOfficer = await Officer.findOne({
-            $or: [
-                { officerNumber: req.body.officerNumber },
-                { emailAddress: req.body.emailAddress }
-            ]
-        });
+        const officersRef = db.collection('officers');
 
-        if (existingOfficer) {
+        // Check if officer already exists by officer number
+        const officerNumberSnapshot = await officersRef
+            .where('officerNumber', '==', req.body.officerNumber)
+            .limit(1)
+            .get();
+
+        if (!officerNumberSnapshot.empty) {
             return res.status(400).json({
                 success: false,
-                message: 'An entry with this service number or email already exists'
+                message: 'An entry with this service number already exists'
             });
         }
 
-        // Create new officer
-        const officer = await Officer.create(req.body);
+        // Check if officer already exists by email
+        const emailSnapshot = await officersRef
+            .where('emailAddress', '==', req.body.emailAddress)
+            .limit(1)
+            .get();
+
+        if (!emailSnapshot.empty) {
+            return res.status(400).json({
+                success: false,
+                message: 'An entry with this email already exists'
+            });
+        }
+
+        // Create new officer document
+        const officerData = {
+            ...req.body,
+            status: 'pending',
+            submissionTimestamp: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+
+        const docRef = await officersRef.add(officerData);
+        
+        // Get the created document
+        const createdDoc = await docRef.get();
+        const officer = { id: createdDoc.id, ...createdDoc.data() };
 
         res.status(201).json({
             success: true,
@@ -56,29 +98,38 @@ exports.getAllOfficers = async (req, res) => {
     try {
         const { page = 1, limit = 20, status, command, rank, search } = req.query;
 
-        // Build query
-        const query = {};
-        
-        if (status) query.status = status;
-        if (command) query.command = command;
-        if (rank) query.rank = rank;
-        if (search) {
-            query.$or = [
-                { officerNumber: new RegExp(search, 'i') },
-                { surname: new RegExp(search, 'i') },
-                { firstName: new RegExp(search, 'i') },
-                { emailAddress: new RegExp(search, 'i') }
-            ];
+        let query = db.collection('officers');
+
+        // Apply filters
+        if (status) {
+            query = query.where('status', '==', status);
+        }
+        if (command) {
+            query = query.where('command', '==', command);
+        }
+        if (rank) {
+            query = query.where('rank', '==', rank);
         }
 
-        // Execute query with pagination
-        const officers = await Officer.find(query)
-            .sort({ submissionTimestamp: -1 })
-            .limit(limit * 1)
-            .skip((page - 1) * limit)
-            .exec();
+        // Note: Firestore doesn't support regex searches like MongoDB
+        // For search functionality, you would need to implement it differently
+        // (e.g., using Algolia, or searching by exact field matches)
 
-        const count = await Officer.countDocuments(query);
+        // Get total count for pagination
+        const countSnapshot = await query.get();
+        const count = countSnapshot.size;
+
+        // Apply pagination and sorting
+        const snapshot = await query
+            .orderBy('submissionTimestamp', 'desc')
+            .limit(parseInt(limit))
+            .offset((parseInt(page) - 1) * parseInt(limit))
+            .get();
+
+        const officers = [];
+        snapshot.forEach(doc => {
+            officers.push({ id: doc.id, ...doc.data() });
+        });
 
         res.status(200).json({
             success: true,
@@ -106,9 +157,10 @@ exports.getAllOfficers = async (req, res) => {
 // @access  Private (Admin)
 exports.getOfficer = async (req, res) => {
     try {
-        const officer = await Officer.findById(req.params.id);
+        const docRef = db.collection('officers').doc(req.params.id);
+        const doc = await docRef.get();
 
-        if (!officer) {
+        if (!doc.exists) {
             return res.status(404).json({
                 success: false,
                 message: 'Officer not found'
@@ -117,7 +169,7 @@ exports.getOfficer = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            data: officer
+            data: { id: doc.id, ...doc.data() }
         });
 
     } catch (error) {
@@ -135,23 +187,31 @@ exports.getOfficer = async (req, res) => {
 // @access  Private (Admin)
 exports.updateOfficer = async (req, res) => {
     try {
-        const officer = await Officer.findByIdAndUpdate(
-            req.params.id,
-            { ...req.body, status: 'updated' },
-            { new: true, runValidators: true }
-        );
+        const docRef = db.collection('officers').doc(req.params.id);
+        const doc = await docRef.get();
 
-        if (!officer) {
+        if (!doc.exists) {
             return res.status(404).json({
                 success: false,
                 message: 'Officer not found'
             });
         }
 
+        const updateData = {
+            ...req.body,
+            status: 'updated',
+            updatedAt: new Date().toISOString()
+        };
+
+        await docRef.update(updateData);
+        
+        // Get updated document
+        const updatedDoc = await docRef.get();
+
         res.status(200).json({
             success: true,
             message: 'Officer data updated successfully',
-            data: officer
+            data: { id: updatedDoc.id, ...updatedDoc.data() }
         });
 
     } catch (error) {
@@ -169,14 +229,17 @@ exports.updateOfficer = async (req, res) => {
 // @access  Private (Admin)
 exports.deleteOfficer = async (req, res) => {
     try {
-        const officer = await Officer.findByIdAndDelete(req.params.id);
+        const docRef = db.collection('officers').doc(req.params.id);
+        const doc = await docRef.get();
 
-        if (!officer) {
+        if (!doc.exists) {
             return res.status(404).json({
                 success: false,
                 message: 'Officer not found'
             });
         }
+
+        await docRef.delete();
 
         res.status(200).json({
             success: true,
@@ -198,24 +261,56 @@ exports.deleteOfficer = async (req, res) => {
 // @access  Private (Admin)
 exports.getStatistics = async (req, res) => {
     try {
-        const totalOfficers = await Officer.countDocuments();
-        const pendingApprovals = await Officer.countDocuments({ status: 'pending' });
-        const approvedOfficers = await Officer.countDocuments({ status: 'approved' });
+        const officersRef = db.collection('officers');
         
-        const officersByRank = await Officer.aggregate([
-            { $group: { _id: '$rank', count: { $sum: 1 } } },
-            { $sort: { count: -1 } }
-        ]);
+        // Get all officers (for small datasets this is fine)
+        const snapshot = await officersRef.get();
+        
+        const totalOfficers = snapshot.size;
+        let pendingApprovals = 0;
+        let approvedOfficers = 0;
+        const officersByRank = {};
+        const officersByCommand = {};
+        const recentSubmissions = [];
 
-        const officersByCommand = await Officer.aggregate([
-            { $group: { _id: '$command', count: { $sum: 1 } } },
-            { $sort: { count: -1 } }
-        ]);
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            
+            // Count by status
+            if (data.status === 'pending') pendingApprovals++;
+            if (data.status === 'approved') approvedOfficers++;
+            
+            // Count by rank
+            officersByRank[data.rank] = (officersByRank[data.rank] || 0) + 1;
+            
+            // Count by command
+            officersByCommand[data.command] = (officersByCommand[data.command] || 0) + 1;
+            
+            // Collect for recent submissions
+            recentSubmissions.push({
+                id: doc.id,
+                officerNumber: data.officerNumber,
+                fullName: `${data.surname} ${data.firstName}`,
+                rank: data.rank,
+                command: data.command,
+                submissionTimestamp: data.submissionTimestamp
+            });
+        });
 
-        const recentSubmissions = await Officer.find()
-            .sort({ submissionTimestamp: -1 })
-            .limit(10)
-            .select('officerNumber fullName rank command submissionTimestamp');
+        // Format rank data
+        const rankData = Object.entries(officersByRank)
+            .map(([rank, count]) => ({ _id: rank, count }))
+            .sort((a, b) => b.count - a.count);
+
+        // Format command data
+        const commandData = Object.entries(officersByCommand)
+            .map(([command, count]) => ({ _id: command, count }))
+            .sort((a, b) => b.count - a.count);
+
+        // Sort and limit recent submissions
+        const sortedRecent = recentSubmissions
+            .sort((a, b) => new Date(b.submissionTimestamp) - new Date(a.submissionTimestamp))
+            .slice(0, 10);
 
         res.status(200).json({
             success: true,
@@ -223,9 +318,9 @@ exports.getStatistics = async (req, res) => {
                 totalOfficers,
                 pendingApprovals,
                 approvedOfficers,
-                officersByRank,
-                officersByCommand,
-                recentSubmissions
+                officersByRank: rankData,
+                officersByCommand: commandData,
+                recentSubmissions: sortedRecent
             }
         });
 
@@ -244,23 +339,27 @@ exports.getStatistics = async (req, res) => {
 // @access  Private (Admin)
 exports.approveOfficer = async (req, res) => {
     try {
-        const officer = await Officer.findByIdAndUpdate(
-            req.params.id,
-            { status: 'approved' },
-            { new: true }
-        );
+        const docRef = db.collection('officers').doc(req.params.id);
+        const doc = await docRef.get();
 
-        if (!officer) {
+        if (!doc.exists) {
             return res.status(404).json({
                 success: false,
                 message: 'Officer not found'
             });
         }
 
+        await docRef.update({
+            status: 'approved',
+            updatedAt: new Date().toISOString()
+        });
+
+        const updatedDoc = await docRef.get();
+
         res.status(200).json({
             success: true,
             message: 'Officer approved successfully',
-            data: officer
+            data: { id: updatedDoc.id, ...updatedDoc.data() }
         });
 
     } catch (error) {
@@ -268,6 +367,25 @@ exports.approveOfficer = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error approving officer',
+            error: error.message
+        });
+    }
+};
+
+// @desc    Get valid ranks
+// @route   GET /api/officers/ranks
+// @access  Public
+exports.getRanks = async (req, res) => {
+    try {
+        res.status(200).json({
+            success: true,
+            data: VALID_RANKS
+        });
+    } catch (error) {
+        console.error('Error fetching ranks:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching ranks',
             error: error.message
         });
     }
