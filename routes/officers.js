@@ -121,6 +121,11 @@ const officerValidation = [
 // Public routes
 router.post('/', officerValidation, createOfficer);
 
+// Meta: list allowed ranks for clients
+router.get('/ranks', (req, res) => {
+    res.status(200).json({ success: true, data: ALLOWED_RANKS });
+});
+
 // Protected routes (require authentication)
 router.get('/', protect, getAllOfficers);
 router.get('/stats', protect, getStatistics);
