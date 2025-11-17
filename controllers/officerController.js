@@ -1,4 +1,4 @@
-const { db } = require('../server');
+const { db } = require('../config/firebase');
 const { validationResult } = require('express-validator');
 
 // Define the valid ranks (same as before)

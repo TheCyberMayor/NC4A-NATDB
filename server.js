@@ -1,5 +1,4 @@
 const express = require('express');
-const admin = require('firebase-admin');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -7,35 +6,8 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-// Initialize Firebase Admin SDK
-try {
-    if (process.env.NODE_ENV === 'production') {
-        // On Render, use the base64-encoded environment variable
-        const serviceAccountBase64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
-        if (!serviceAccountBase64) {
-            throw new Error('FIREBASE_SERVICE_ACCOUNT_BASE64 environment variable not set.');
-        }
-        const serviceAccountJson = Buffer.from(serviceAccountBase64, 'base64').toString('ascii');
-        const serviceAccount = JSON.parse(serviceAccountJson);
-
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
-        });
-        console.log('Firebase Admin SDK initialized for production.');
-    } else {
-        // In development, use the local file
-        const serviceAccount = require('./firebase-service-account.json');
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
-        });
-        console.log('Firebase Admin SDK initialized for development.');
-    }
-} catch (error) {
-    console.error('Firebase initialization error:', error.message);
-    process.exit(1);
-}
-
-const db = admin.firestore();
+// Initialize Firebase (separate module to avoid circular deps)
+require('./config/firebase');
 
 const app = express();
 
@@ -45,7 +17,7 @@ app.set('trust proxy', 1);
 
 // Import routes
 const officerRoutes = require('./routes/officers');
-const adminRoutes = require('./routes/admin');
+// const adminRoutes = require('./routes/admin'); // Temporarily disabled until migrated to Firebase
 
 // Security middleware
 app.use(helmet());
@@ -88,7 +60,7 @@ app.use(express.static('public'));
 
 // API Routes
 app.use('/api/officers', officerRoutes);
-app.use('/api/admin', adminRoutes);
+// app.use('/api/admin', adminRoutes); // Temporarily disabled until migrated to Firebase
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -153,4 +125,3 @@ process.on('SIGTERM', () => {
     process.exit(0);
 });
 
-module.exports = { db };

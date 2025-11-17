@@ -8,29 +8,26 @@ const {
     updateOfficer,
     deleteOfficer,
     getStatistics,
-    approveOfficer
+    approveOfficer,
+    getRanks
 } = require('../controllers/officerController');
-const { protect, authorize } = require('../middleware/auth');
+// const { protect, authorize } = require('../middleware/auth'); // Temporarily disabled until migrated to Firebase
 
-// Allowed rank values
+// Allowed rank values (aligned with controller VALID_RANKS)
 const ALLOWED_RANKS = [
-    'Auxiliary',
-    'Lance Corporal',
-    'Corporal',
+    'Air Commodore',
+    'Group Captain',
+    'Wing Commander',
+    'Squadron Leader',
+    'Flight Lieutenant',
+    'Flying Officer',
+    'Pilot Officer',
+    'Warrant Officer',
+    'Flight Sergeant',
     'Sergeant',
-    'Deputy Inspector',
-    'Inspector',
-    'Chief Inspector',
-    'Assistant Superintendent II',
-    'Assistant Superintendent I',
-    'Deputy Superintendent',
-    'Superintendent',
-    'Chief Superintendent',
-    'Assistant Commander',
-    'Deputy Commander',
-    'Commander',
-    'Assistant Corps Commander',
-    'Deputy Corps Commander'
+    'Corporal',
+    'Lance Corporal',
+    'Aircraftman/Aircraftwoman'
 ];
 
 // Nigerian States and LGAs (subset used for validation)
@@ -122,16 +119,14 @@ const officerValidation = [
 router.post('/', officerValidation, createOfficer);
 
 // Meta: list allowed ranks for clients
-router.get('/ranks', (req, res) => {
-    res.status(200).json({ success: true, data: ALLOWED_RANKS });
-});
+router.get('/ranks', getRanks);
 
-// Protected routes (require authentication)
-router.get('/', protect, getAllOfficers);
-router.get('/stats', protect, getStatistics);
-router.get('/:id', protect, getOfficer);
-router.put('/:id', protect, authorize('admin', 'superadmin'), updateOfficer);
-router.delete('/:id', protect, authorize('superadmin'), deleteOfficer);
-router.patch('/:id/approve', protect, authorize('admin', 'superadmin'), approveOfficer);
+// Protected routes (require authentication) - Temporarily disabled until admin system migrated to Firebase
+// router.get('/', protect, getAllOfficers);
+// router.get('/stats', protect, getStatistics);
+// router.get('/:id', protect, getOfficer);
+// router.put('/:id', protect, authorize('admin', 'superadmin'), updateOfficer);
+// router.delete('/:id', protect, authorize('superadmin'), deleteOfficer);
+// router.patch('/:id/approve', protect, authorize('admin', 'superadmin'), approveOfficer);
 
 module.exports = router;
