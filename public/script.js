@@ -115,6 +115,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (stateSelect && lgaSelect) {
         // Initialize on load
         populateLgas(stateSelect.value);
+        if (!stateSelect.value) {
+            resetLgaSelect();
+        }
         // Update on change
         stateSelect.addEventListener('change', function() {
             const prev = lgaSelect.value;
@@ -122,6 +125,19 @@ document.addEventListener('DOMContentLoaded', function() {
             // try to keep previous selection if still valid
             if ([...lgaSelect.options].some(o => o.value === prev)) {
                 lgaSelect.value = prev;
+            } else {
+                lgaSelect.value = '';
+            }
+            // Clear any previous LGA errors on state change
+            clearError(lgaSelect);
+        });
+
+        // Validate LGA on blur
+        lgaSelect.addEventListener('blur', function() {
+            if (stateSelect.value && !lgaSelect.value) {
+                showError(lgaSelect, 'Please select your Local Government Area');
+            } else {
+                clearError(lgaSelect);
             }
         });
     }
@@ -312,6 +328,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!validateEnlistmentDate(enlistmentInput)) {
             isValid = false;
+        }
+
+        // Validate LGA only when a state is selected
+        if (stateSelect && lgaSelect) {
+            if (stateSelect.value && !lgaSelect.value) {
+                showError(lgaSelect, 'Please select your Local Government Area');
+                isValid = false;
+            }
         }
 
         // Check declaration checkbox
