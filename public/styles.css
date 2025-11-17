@@ -24,7 +24,7 @@ body {
 
 /* Header Styles */
 .form-header {
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background: linear-gradient(135deg, #cdcdcd 0%, #c0c0c0 100%);
     color: rgb(20, 109, 62);
     padding: 40px 30px;
     text-align: center;
