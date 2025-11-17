@@ -31,6 +31,28 @@ body {
     border-bottom: 5px solid #FFD700;
 }
 
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.logo-left,
+.logo-right {
+    flex-shrink: 0;
+}
+
+.header-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.logo-section {
+    flex: 1;
+}
+
 .form-header h1 {
     font-size: 2.5em;
     margin-bottom: 10px;
@@ -346,6 +368,16 @@ body {
 
     .form-section {
         padding: 15px;
+    }
+
+    .header-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .header-logo {
+        width: 60px;
+        height: 60px;
     }
 
     .form-row {
