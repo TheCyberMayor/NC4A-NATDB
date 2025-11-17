@@ -26,7 +26,7 @@ exports.createOfficer = async (req, res) => {
         if (existingOfficer) {
             return res.status(400).json({
                 success: false,
-                message: 'Officer with this number or email already exists'
+                message: 'An entry with this service number or email already exists'
             });
         }
 

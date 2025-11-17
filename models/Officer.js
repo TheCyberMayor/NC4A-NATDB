@@ -53,7 +53,7 @@ const officerSchema = new mongoose.Schema({
     // Service Records
     officerNumber: {
         type: String,
-        required: [true, 'Officer number is required'],
+        required: [true, 'Service number is required'],
         unique: true,
         index: true,
         trim: true,

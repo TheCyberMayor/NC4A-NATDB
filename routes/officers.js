@@ -74,7 +74,7 @@ const officerValidation = [
         }).withMessage('Selected LGA is not valid for the chosen state'),
     body('nationality').notEmpty().withMessage('Nationality is required'),
     body('homeAddress').notEmpty().withMessage('Home address is required'),
-    body('officerNumber').notEmpty().trim().withMessage('Officer number is required'),
+    body('officerNumber').notEmpty().trim().withMessage('Service number is required'),
     body('rank').notEmpty().withMessage('Rank is required'),
     body('dateOfEnlistment').isDate().withMessage('Valid enlistment date is required'),
     body('command').notEmpty().withMessage('Command is required'),
