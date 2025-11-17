@@ -55,6 +55,7 @@ const officerSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Officer number is required'],
         unique: true,
+        index: true,
         trim: true,
         uppercase: true
     },
@@ -102,6 +103,7 @@ const officerSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Email is required'],
         unique: true,
+        index: true,
         lowercase: true,
         match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email']
     },
@@ -206,9 +208,7 @@ const officerSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Indexes for faster queries
-officerSchema.index({ officerNumber: 1 });
-officerSchema.index({ emailAddress: 1 });
+// Indexes for faster queries (officerNumber and emailAddress already have unique indexes)
 officerSchema.index({ command: 1 });
 officerSchema.index({ rank: 1 });
 officerSchema.index({ status: 1 });
