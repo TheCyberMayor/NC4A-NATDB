@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CADETN National Database Form - Officers' Data Collection</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="form-header">
+            <div class="logo-section">
+                <h1>NIGERIA CADET NETWORK</h1>
+                <h2>NATIONAL DATABASE FORM</h2>
+                <p class="subtitle">Officers' Data Collection System</p>
+                <p class="department">Directorate of Information and Communication Technology (ICT)</p>
+            </div>
+        </header>
+
+        <form id="officerDataForm" class="data-form">
+            <!-- Section 1: Personal Information -->
+            <section class="form-section">
+                <h3 class="section-title">Section A: Personal Information</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="surname">Surname <span class="required">*</span></label>
+                        <input type="text" id="surname" name="surname" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="firstName">First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="middleName">Middle Name</label>
+                        <input type="text" id="middleName" name="middleName">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dateOfBirth">Date of Birth <span class="required">*</span></label>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gender">Gender <span class="required">*</span></label>
+                        <select id="gender" name="gender" required>
+                            <option value="">-- Select --</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bloodGroup">Blood Group</label>
+                        <select id="bloodGroup" name="bloodGroup">
+                            <option value="">-- Select --</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="stateOfOrigin">State of Origin <span class="required">*</span></label>
+                        <select id="stateOfOrigin" name="stateOfOrigin" required>
+                            <option value="">-- Select --</option>
+                            <option value="Abia">Abia</option>
+                            <option value="Adamawa">Adamawa</option>
+                            <option value="Akwa Ibom">Akwa Ibom</option>
+                            <option value="Anambra">Anambra</option>
+                            <option value="Bauchi">Bauchi</option>
+                            <option value="Bayelsa">Bayelsa</option>
+                            <option value="Benue">Benue</option>
+                            <option value="Borno">Borno</option>
+                            <option value="Cross River">Cross River</option>
+                            <option value="Delta">Delta</option>
+                            <option value="Ebonyi">Ebonyi</option>
+                            <option value="Edo">Edo</option>
+                            <option value="Ekiti">Ekiti</option>
+                            <option value="Enugu">Enugu</option>
+                            <option value="FCT">Federal Capital Territory</option>
+                            <option value="Gombe">Gombe</option>
+                            <option value="Imo">Imo</option>
+                            <option value="Jigawa">Jigawa</option>
+                            <option value="Kaduna">Kaduna</option>
+                            <option value="Kano">Kano</option>
+                            <option value="Katsina">Katsina</option>
+                            <option value="Kebbi">Kebbi</option>
+                            <option value="Kogi">Kogi</option>
+                            <option value="Kwara">Kwara</option>
+                            <option value="Lagos">Lagos</option>
+                            <option value="Nasarawa">Nasarawa</option>
+                            <option value="Niger">Niger</option>
+                            <option value="Ogun">Ogun</option>
+                            <option value="Ondo">Ondo</option>
+                            <option value="Osun">Osun</option>
+                            <option value="Oyo">Oyo</option>
+                            <option value="Plateau">Plateau</option>
+                            <option value="Rivers">Rivers</option>
+                            <option value="Sokoto">Sokoto</option>
+                            <option value="Taraba">Taraba</option>
+                            <option value="Yobe">Yobe</option>
+                            <option value="Zamfara">Zamfara</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lga">Local Government Area <span class="required">*</span></label>
+                        <input type="text" id="lga" name="lga" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nationality">Nationality <span class="required">*</span></label>
+                        <input type="text" id="nationality" name="nationality" value="Nigerian" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="homeAddress">Home Address <span class="required">*</span></label>
+                        <textarea id="homeAddress" name="homeAddress" rows="3" required></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Service Records -->
+            <section class="form-section">
+                <h3 class="section-title">Section B: Service Records</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="officerNumber">Officer Number <span class="required">*</span></label>
+                        <input type="text" id="officerNumber" name="officerNumber" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="rank">Current Rank <span class="required">*</span></label>
+                        <select id="rank" name="rank" required>
+                            <option value="">-- Select --</option>
+                            <option value="Cadet">Cadet</option>
+                            <option value="Junior Cadet">Junior Cadet</option>
+                            <option value="Senior Cadet">Senior Cadet</option>
+                            <option value="Cadet Officer">Cadet Officer</option>
+                            <option value="Junior Officer">Junior Officer</option>
+                            <option value="Senior Officer">Senior Officer</option>
+                            <option value="Principal Officer">Principal Officer</option>
+                            <option value="Chief Officer">Chief Officer</option>
+                            <option value="Commandant">Commandant</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dateOfEnlistment">Date of Enlistment <span class="required">*</span></label>
+                        <input type="date" id="dateOfEnlistment" name="dateOfEnlistment" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dateOfLastPromotion">Date of Last Promotion</label>
+                        <input type="date" id="dateOfLastPromotion" name="dateOfLastPromotion">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="command">Command/Formation <span class="required">*</span></label>
+                        <input type="text" id="command" name="command" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="unit">Unit <span class="required">*</span></label>
+                        <input type="text" id="unit" name="unit" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="specialization">Specialization/Trade</label>
+                        <input type="text" id="specialization" name="specialization">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="currentPosting">Current Posting <span class="required">*</span></label>
+                        <input type="text" id="currentPosting" name="currentPosting" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dateOfCurrentPosting">Date of Current Posting</label>
+                        <input type="date" id="dateOfCurrentPosting" name="dateOfCurrentPosting">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Contact Information -->
+            <section class="form-section">
+                <h3 class="section-title">Section C: Contact Information</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phoneNumber">Phone Number <span class="required">*</span></label>
+                        <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="e.g., 08012345678" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alternatePhone">Alternate Phone Number</label>
+                        <input type="tel" id="alternatePhone" name="alternatePhone" placeholder="e.g., 08012345678">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emailAddress">Email Address <span class="required">*</span></label>
+                        <input type="email" id="emailAddress" name="emailAddress" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="contactAddress">Contact Address <span class="required">*</span></label>
+                        <textarea id="contactAddress" name="contactAddress" rows="3" required></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Educational Qualifications -->
+            <section class="form-section">
+                <h3 class="section-title">Section D: Educational Qualifications</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="highestQualification">Highest Educational Qualification <span class="required">*</span></label>
+                        <select id="highestQualification" name="highestQualification" required>
+                            <option value="">-- Select --</option>
+                            <option value="SSCE/WAEC">SSCE/WAEC</option>
+                            <option value="OND/NCE">OND/NCE</option>
+                            <option value="HND">HND</option>
+                            <option value="Bachelor's Degree">Bachelor's Degree</option>
+                            <option value="Master's Degree">Master's Degree</option>
+                            <option value="PhD">PhD</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discipline">Field of Study/Discipline</label>
+                        <input type="text" id="discipline" name="discipline">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="institution">Institution</label>
+                        <input type="text" id="institution" name="institution">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="yearOfGraduation">Year of Graduation</label>
+                        <input type="number" id="yearOfGraduation" name="yearOfGraduation" min="1960" max="2025">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="professionalCertifications">Professional Certifications (if any)</label>
+                        <input type="text" id="professionalCertifications" name="professionalCertifications" placeholder="Separate multiple with commas">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Next of Kin Information -->
+            <section class="form-section">
+                <h3 class="section-title">Section E: Next of Kin Information</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nokName">Full Name <span class="required">*</span></label>
+                        <input type="text" id="nokName" name="nokName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nokRelationship">Relationship <span class="required">*</span></label>
+                        <input type="text" id="nokRelationship" name="nokRelationship" placeholder="e.g., Spouse, Parent, Sibling" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nokPhone">Phone Number <span class="required">*</span></label>
+                        <input type="tel" id="nokPhone" name="nokPhone" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="nokAddress">Address <span class="required">*</span></label>
+                        <textarea id="nokAddress" name="nokAddress" rows="3" required></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Additional Information -->
+            <section class="form-section">
+                <h3 class="section-title">Section F: Additional Information</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="maritalStatus">Marital Status <span class="required">*</span></label>
+                        <select id="maritalStatus" name="maritalStatus" required>
+                            <option value="">-- Select --</option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Divorced">Divorced</option>
+                            <option value="Widowed">Widowed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="numberOfDependents">Number of Dependents</label>
+                        <input type="number" id="numberOfDependents" name="numberOfDependents" min="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nin">National Identification Number (NIN)</label>
+                        <input type="text" id="nin" name="nin" maxlength="11">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="specialSkills">Special Skills/Competencies</label>
+                        <textarea id="specialSkills" name="specialSkills" rows="3" placeholder="Please list any special skills or competencies"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="remarks">Remarks/Additional Information</label>
+                        <textarea id="remarks" name="remarks" rows="3"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Declaration -->
+            <section class="form-section declaration-section">
+                <h3 class="section-title">Declaration</h3>
+                <div class="declaration-text">
+                    <p>I hereby declare that the information provided above is true, accurate, and complete to the best of my knowledge. I understand that any false information may result in disciplinary action.</p>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="declaration" name="declaration" required>
+                        <label for="declaration">
+                            I agree to the declaration above <span class="required">*</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="officerSignature">Officer's Full Name <span class="required">*</span></label>
+                        <input type="text" id="officerSignature" name="officerSignature" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="submissionDate">Date <span class="required">*</span></label>
+                        <input type="date" id="submissionDate" name="submissionDate" required>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="reset" class="btn btn-secondary">Clear Form</button>
+                <button type="submit" class="btn btn-primary">Submit Data</button>
+            </div>
+        </form>
+
+        <footer class="form-footer">
+            <p>&copy; 2025 Nigeria Cadet Network - Directorate of ICT</p>
+            <p class="privacy-note">All data collected is protected under CADETN Data Protection Policy</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
