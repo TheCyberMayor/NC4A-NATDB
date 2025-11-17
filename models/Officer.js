@@ -61,7 +61,29 @@ const officerSchema = new mongoose.Schema({
     },
     rank: {
         type: String,
-        required: [true, 'Rank is required']
+        required: [true, 'Rank is required'],
+        enum: {
+            values: [
+                'Auxiliary',
+                'Lance Corporal',
+                'Corporal',
+                'Sergeant',
+                'Deputy Inspector',
+                'Inspector',
+                'Chief Inspector',
+                'Assistant Superintendent II',
+                'Assistant Superintendent I',
+                'Deputy Superintendent',
+                'Superintendent',
+                'Chief Superintendent',
+                'Assistant Commander',
+                'Deputy Commander',
+                'Commander',
+                'Assistant Corps Commander',
+                'Deputy Corps Commander'
+            ],
+            message: 'Rank must be one of the approved list'
+        }
     },
     dateOfEnlistment: {
         type: Date,

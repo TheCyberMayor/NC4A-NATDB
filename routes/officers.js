@@ -12,6 +12,27 @@ const {
 } = require('../controllers/officerController');
 const { protect, authorize } = require('../middleware/auth');
 
+// Allowed rank values
+const ALLOWED_RANKS = [
+    'Auxiliary',
+    'Lance Corporal',
+    'Corporal',
+    'Sergeant',
+    'Deputy Inspector',
+    'Inspector',
+    'Chief Inspector',
+    'Assistant Superintendent II',
+    'Assistant Superintendent I',
+    'Deputy Superintendent',
+    'Superintendent',
+    'Chief Superintendent',
+    'Assistant Commander',
+    'Deputy Commander',
+    'Commander',
+    'Assistant Corps Commander',
+    'Deputy Corps Commander'
+];
+
 // Nigerian States and LGAs (subset used for validation)
 const lgasByState = {
     Abia: ["Aba North","Aba South","Arochukwu","Bende","Ikwuano","Isiala Ngwa North","Isiala Ngwa South","Isuikwuato","Obi Ngwa","Ohafia","Osisioma","Ugwunagbo","Ukwa East","Ukwa West","Umuahia North","Umuahia South","Umu Nneochi"],
@@ -75,7 +96,11 @@ const officerValidation = [
     body('nationality').notEmpty().withMessage('Nationality is required'),
     body('homeAddress').notEmpty().withMessage('Home address is required'),
     body('officerNumber').notEmpty().trim().withMessage('Service number is required'),
-    body('rank').notEmpty().withMessage('Rank is required'),
+    body('rank')
+        .notEmpty().withMessage('Rank is required')
+        .bail()
+        .isIn(ALLOWED_RANKS)
+        .withMessage('Rank must be one of the approved list'),
     body('dateOfEnlistment').isDate().withMessage('Valid enlistment date is required'),
     body('command').notEmpty().withMessage('Command is required'),
     body('unit').notEmpty().withMessage('Unit is required'),
