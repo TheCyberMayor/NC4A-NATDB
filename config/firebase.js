@@ -25,6 +25,8 @@ try {
             try {
                 serviceAccount = JSON.parse(rawJson);
             } catch (e) {
+                console.error('Raw JSON parse failed. First 80 chars:', rawJson.substring(0,80));
+                console.error('Length of provided JSON string:', rawJson.length);
                 throw new Error('Invalid FIREBASE_SERVICE_ACCOUNT_JSON: not valid JSON');
             }
         } else {
