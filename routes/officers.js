@@ -125,8 +125,8 @@ router.get('/ranks', getRanks);
 // Public route for dashboard data visualization
 router.get('/all', getAllOfficersNoPagination);
 
-// Protected routes (require authentication) - Temporarily disabled until admin system migrated to Firebase
-// router.get('/', protect, getAllOfficers);
+// Public paginated listing (temporary until auth system migrated)
+router.get('/', getAllOfficers);
 // router.get('/stats', protect, getStatistics);
 // router.get('/:id', protect, getOfficer);
 // router.put('/:id', protect, authorize('admin', 'superadmin'), updateOfficer);
