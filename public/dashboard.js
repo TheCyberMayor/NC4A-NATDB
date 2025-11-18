@@ -17,18 +17,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Load all data
 async function loadData() {
+    showLoading();
     try {
-        showLoading();
-        const response = await fetch(`${API_URL}/officers/all`);
-        
+        // First attempt: new bulk endpoint
+        let response = await fetch(`${API_URL}/officers/all`);
+
+        // Fallback: use paginated endpoint if /all does not exist (older deployment)
         if (!response.ok) {
-            throw new Error('Failed to fetch data');
+            const fallback = await fetch(`${API_URL}/officers?limit=500&page=1`);
+            if (!fallback.ok) {
+                throw new Error('Failed to fetch data');
+            }
+            const fbData = await fallback.json();
+            // Paginated format differs (data vs officers)
+            allOfficers = fbData.data || [];
+        } else {
+            const data = await response.json();
+            allOfficers = data.officers || [];
         }
 
-        const data = await response.json();
-        allOfficers = data.officers || [];
         filteredOfficers = [...allOfficers];
-
         updateStatistics();
         populateFilters();
         renderCharts();
