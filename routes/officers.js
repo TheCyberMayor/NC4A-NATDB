@@ -4,6 +4,7 @@ const { body } = require('express-validator');
 const {
     createOfficer,
     getAllOfficers,
+    getAllOfficersNoPagination,
     getOfficer,
     updateOfficer,
     deleteOfficer,
@@ -120,6 +121,9 @@ router.post('/', officerValidation, createOfficer);
 
 // Meta: list allowed ranks for clients
 router.get('/ranks', getRanks);
+
+// Public route for dashboard data visualization
+router.get('/all', getAllOfficersNoPagination);
 
 // Protected routes (require authentication) - Temporarily disabled until admin system migrated to Firebase
 // router.get('/', protect, getAllOfficers);

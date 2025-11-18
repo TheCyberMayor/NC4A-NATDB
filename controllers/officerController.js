@@ -91,7 +91,37 @@ exports.createOfficer = async (req, res) => {
     }
 };
 
-// @desc    Get all officers
+// @desc    Get all officers (for dashboard - no pagination)
+// @route   GET /api/officers/all
+// @access  Public
+exports.getAllOfficersNoPagination = async (req, res) => {
+    try {
+        const snapshot = await db.collection('officers')
+            .orderBy('submissionTimestamp', 'desc')
+            .get();
+
+        const officers = [];
+        snapshot.forEach(doc => {
+            officers.push({ id: doc.id, ...doc.data() });
+        });
+
+        res.status(200).json({
+            success: true,
+            officers: officers,
+            total: officers.length
+        });
+
+    } catch (error) {
+        console.error('Error fetching all officers:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching officers',
+            error: error.message
+        });
+    }
+};
+
+// @desc    Get all officers (paginated)
 // @route   GET /api/officers
 // @access  Private (Admin)
 exports.getAllOfficers = async (req, res) => {
