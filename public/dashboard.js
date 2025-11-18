@@ -70,7 +70,7 @@ function updateStatistics() {
 function populateFilters() {
     const ranks = [...new Set(allOfficers.map(o => o.rank))].sort();
     const commands = [...new Set(allOfficers.map(o => o.command))].sort();
-    const states = [...new Set(allOfficers.map(o => o.state))].sort();
+    const states = [...new Set(allOfficers.map(o => o.stateOfOrigin))].sort();
 
     const rankSelect = document.getElementById('filterRank');
     const commandSelect = document.getElementById('filterCommand');
@@ -99,13 +99,13 @@ function applyFilters() {
     filteredOfficers = allOfficers.filter(officer => {
         const matchesRank = !rankFilter || officer.rank === rankFilter;
         const matchesCommand = !commandFilter || officer.command === commandFilter;
-        const matchesState = !stateFilter || officer.state === stateFilter;
+        const matchesState = !stateFilter || officer.stateOfOrigin === stateFilter;
         const matchesSearch = !searchQuery || 
-            officer.surname.toLowerCase().includes(searchQuery) ||
-            officer.firstName.toLowerCase().includes(searchQuery) ||
-            officer.email.toLowerCase().includes(searchQuery) ||
-            officer.phoneNumber.includes(searchQuery) ||
-            officer.serviceNumber.toLowerCase().includes(searchQuery);
+            (officer.surname && officer.surname.toLowerCase().includes(searchQuery)) ||
+            (officer.firstName && officer.firstName.toLowerCase().includes(searchQuery)) ||
+            (officer.emailAddress && officer.emailAddress.toLowerCase().includes(searchQuery)) ||
+            (officer.phoneNumber && officer.phoneNumber.includes(searchQuery)) ||
+            (officer.officerNumber && officer.officerNumber.toLowerCase().includes(searchQuery));
 
         return matchesRank && matchesCommand && matchesState && matchesSearch;
     });
@@ -219,7 +219,8 @@ function renderStateChart() {
     const stateCounts = {};
     
     allOfficers.forEach(officer => {
-        stateCounts[officer.state] = (stateCounts[officer.state] || 0) + 1;
+        const state = officer.stateOfOrigin || 'Unknown';
+        stateCounts[state] = (stateCounts[state] || 0) + 1;
     });
 
     // Get top 10 states
@@ -315,13 +316,13 @@ function renderTable() {
     tbody.innerHTML = pageData.map((officer, index) => `
         <tr>
             <td>${start + index + 1}</td>
-            <td>${officer.surname} ${officer.firstName}</td>
-            <td>${officer.rank}</td>
-            <td>${officer.serviceNumber}</td>
-            <td>${officer.command}</td>
-            <td>${officer.state}</td>
-            <td>${officer.email}<br>${officer.phoneNumber}</td>
-            <td>${new Date(officer.submissionTimestamp).toLocaleDateString()}</td>
+            <td>${officer.surname || ''} ${officer.firstName || ''}</td>
+            <td>${officer.rank || 'N/A'}</td>
+            <td>${officer.officerNumber || 'N/A'}</td>
+            <td>${officer.command || 'N/A'}</td>
+            <td>${officer.stateOfOrigin || 'N/A'}</td>
+            <td>${officer.emailAddress || 'N/A'}<br>${officer.phoneNumber || 'N/A'}</td>
+            <td>${officer.submissionTimestamp ? new Date(officer.submissionTimestamp).toLocaleDateString() : 'N/A'}</td>
         </tr>
     `).join('');
 
@@ -396,18 +397,18 @@ function exportCSV() {
     
     const rows = filteredOfficers.map((officer, index) => [
         index + 1,
-        officer.surname,
-        officer.firstName,
+        officer.surname || '',
+        officer.firstName || '',
         officer.middleName || '',
-        officer.rank,
-        officer.serviceNumber,
-        officer.command,
-        officer.email,
-        officer.phoneNumber,
-        officer.gender,
-        officer.state,
-        officer.lga,
-        officer.dateOfBirth,
+        officer.rank || '',
+        officer.officerNumber || '',
+        officer.command || '',
+        officer.emailAddress || '',
+        officer.phoneNumber || '',
+        officer.gender || '',
+        officer.stateOfOrigin || '',
+        officer.lga || '',
+        officer.dateOfBirth || '',
         new Date(officer.submissionTimestamp).toLocaleString()
     ]);
 
@@ -429,18 +430,18 @@ function exportJSON() {
 function exportExcel() {
     const data = filteredOfficers.map((officer, index) => ({
         'S/N': index + 1,
-        'Surname': officer.surname,
-        'First Name': officer.firstName,
+        'Surname': officer.surname || '',
+        'First Name': officer.firstName || '',
         'Middle Name': officer.middleName || '',
-        'Rank': officer.rank,
-        'Service Number': officer.serviceNumber,
-        'Command': officer.command,
-        'Email': officer.email,
-        'Phone': officer.phoneNumber,
-        'Gender': officer.gender,
-        'State': officer.state,
-        'LGA': officer.lga,
-        'Date of Birth': officer.dateOfBirth,
+        'Rank': officer.rank || '',
+        'Service Number': officer.officerNumber || '',
+        'Command': officer.command || '',
+        'Email': officer.emailAddress || '',
+        'Phone': officer.phoneNumber || '',
+        'Gender': officer.gender || '',
+        'State': officer.stateOfOrigin || '',
+        'LGA': officer.lga || '',
+        'Date of Birth': officer.dateOfBirth || '',
         'Submission Date': new Date(officer.submissionTimestamp).toLocaleString()
     }));
 
