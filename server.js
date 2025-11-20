@@ -19,8 +19,22 @@ app.set('trust proxy', 1);
 const officerRoutes = require('./routes/officers');
 // const adminRoutes = require('./routes/admin'); // Temporarily disabled until migrated to Firebase
 
-// Security middleware
-app.use(helmet());
+// Security middleware with CSP configured for dashboard CDN scripts
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:"],
+            connectSrc: ["'self'"],
+            fontSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            mediaSrc: ["'self'"],
+            frameSrc: ["'none'"]
+        }
+    }
+}));
 
 // CORS configuration
 const corsOptions = {
