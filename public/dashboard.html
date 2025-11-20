@@ -6,6 +6,7 @@
     <title>CADETN Dashboard - Data Visualization</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="auth-guard.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -26,6 +27,9 @@
                     </button>
                     <button onclick="refreshData()" class="btn-primary">
                         <span>🔄</span> Refresh Data
+                    </button>
+                    <button onclick="logout()" class="btn-secondary" style="background: #ef4444; color: white; border-color: #ef4444;">
+                        <span>🚪</span> Logout
                     </button>
                 </div>
             </div>

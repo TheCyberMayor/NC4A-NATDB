@@ -17,6 +17,7 @@ app.set('trust proxy', 1);
 
 // Import routes
 const officerRoutes = require('./routes/officers');
+const authRoutes = require('./routes/auth');
 // const adminRoutes = require('./routes/admin'); // Temporarily disabled until migrated to Firebase
 
 // Security middleware with CSP configured for dashboard CDN scripts
@@ -73,6 +74,7 @@ app.use('/api/', limiter);
 app.use(express.static('public'));
 
 // API Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/officers', officerRoutes);
 // app.use('/api/admin', adminRoutes); // Temporarily disabled until migrated to Firebase
 

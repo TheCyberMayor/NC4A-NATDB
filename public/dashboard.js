@@ -469,6 +469,14 @@ function refreshData() {
     loadData();
 }
 
+// Logout
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('cadetn_auth');
+        window.location.href = 'login.html';
+    }
+}
+
 // Loading helpers
 function showLoading() {
     document.getElementById('tableBody').innerHTML = 
