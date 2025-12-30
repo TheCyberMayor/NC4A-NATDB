@@ -102,7 +102,7 @@ const officerValidation = [
     body('dateOfEnlistment').isDate().withMessage('Valid enlistment date is required'),
     body('command').notEmpty().withMessage('Command is required'),
     body('unit').notEmpty().withMessage('Unit is required'),
-    body('currentPosting').notEmpty().withMessage('Current posting is required'),
+    body('currentPosting').notEmpty().withMessage('Area serving is required'),
     body('phoneNumber').matches(/^0[789][01]\d{8}$/).withMessage('Valid Nigerian phone number is required'),
     body('emailAddress').isEmail().normalizeEmail().withMessage('Valid email is required'),
     body('contactAddress').notEmpty().withMessage('Contact address is required'),
