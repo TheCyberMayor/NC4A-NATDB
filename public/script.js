@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Real-time validation for phone numbers
-    const phoneInputs = ['phoneNumber', 'alternatePhone', 'nokPhone'];
+    const phoneInputs = ['phoneNumber', 'nokPhone'];
     phoneInputs.forEach(inputId => {
         const input = document.getElementById(inputId);
         if (input) {
