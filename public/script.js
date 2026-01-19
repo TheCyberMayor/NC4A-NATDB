@@ -5,10 +5,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('officerDataForm');
     const submissionDate = document.getElementById('submissionDate');
     
+    if (!form) {
+        console.error('Form not found! Cannot initialize form handlers.');
+        return;
+    }
+    
     // Set today's date as default for submission date
     const today = new Date().toISOString().split('T')[0];
-    submissionDate.value = today;
-    submissionDate.setAttribute('max', today);
+    if (submissionDate) {
+        submissionDate.value = today;
+        submissionDate.setAttribute('max', today);
+    }
 
     // Phone number validation pattern (Nigerian format)
     const phonePattern = /^0[789][01]\d{8}$/;
@@ -252,6 +259,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show error message
     function showError(input, message) {
         const formGroup = input.closest('.form-group');
+        if (!formGroup) {
+            console.error('No form-group found for input:', input);
+            return;
+        }
         formGroup.classList.add('has-error');
         input.classList.add('error');
         
@@ -267,6 +278,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Clear error message
     function clearError(input) {
         const formGroup = input.closest('.form-group');
+        if (!formGroup) {
+            return;
+        }
         formGroup.classList.remove('has-error');
         input.classList.remove('error');
         
@@ -279,6 +293,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form submission handler
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+        
+        console.log('Form submission triggered');
         
         // Clear all previous errors
         document.querySelectorAll('.error').forEach(el => {
@@ -340,12 +356,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Check declaration checkbox
         const declarationCheckbox = document.getElementById('declaration');
-        if (!declarationCheckbox.checked) {
+        if (!declarationCheckbox) {
+            console.error('Declaration checkbox not found!');
+            isValid = false;
+        } else if (!declarationCheckbox.checked) {
             showError(declarationCheckbox, 'You must agree to the declaration');
             isValid = false;
         }
 
         if (!isValid) {
+            console.log('Form validation failed');
             // Scroll to first error
             const firstError = document.querySelector('.has-error');
             if (firstError) {
@@ -356,12 +376,15 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        console.log('Form validation passed, submitting...');
         // If validation passes, collect and submit data
         submitFormData();
     });
 
     // Submit form data
     function submitFormData() {
+        console.log('submitFormData() called');
+        
         // Show loading spinner
         showLoading(true);
 
@@ -378,6 +401,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data.formVersion = '1.0';
 
         console.log('Form Data:', data);
+        console.log('Submitting to:', '/api/officers');
 
         // Submit to server
         fetch('/api/officers', {
@@ -387,8 +411,13 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify(data)
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response OK:', response.ok);
+            return response.json();
+        })
         .then(result => {
+            console.log('Result:', result);
             showLoading(false);
             
             if (result.success) {
