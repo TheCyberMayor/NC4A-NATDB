@@ -39,8 +39,10 @@ app.use(helmet({
 
 // CORS configuration
 const corsOptions = {
-    origin: process.env.CLIENT_URL || '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: process.env.NODE_ENV === 'production' 
+        ? (process.env.CLIENT_URL || true) 
+        : '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 };
@@ -58,6 +60,11 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 } else {
     app.use(morgan('combined'));
+    // Additional logging for production debugging
+    app.use((req, res, next) => {
+        console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+        next();
+    });
 }
 
 // Rate limiting
@@ -103,7 +110,13 @@ app.use((req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    console.error('Error occurred:', {
+        message: err.message,
+        stack: err.stack,
+        url: req.url,
+        method: req.method,
+        body: req.body
+    });
     
     res.status(err.status || 500).json({
         success: false,

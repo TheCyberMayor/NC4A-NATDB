@@ -23,9 +23,16 @@ const VALID_RANKS = [
 // @access  Public
 exports.createOfficer = async (req, res) => {
     try {
+        console.log('Create officer request received:', {
+            timestamp: new Date().toISOString(),
+            officerNumber: req.body.officerNumber,
+            email: req.body.emailAddress
+        });
+        
         // Check for validation errors
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
+            console.error('Validation errors:', errors.array());
             return res.status(400).json({
                 success: false,
                 errors: errors.array()
@@ -41,6 +48,7 @@ exports.createOfficer = async (req, res) => {
             .get();
 
         if (!officerNumberSnapshot.empty) {
+            console.log('Duplicate officer number detected:', req.body.officerNumber);
             return res.status(400).json({
                 success: false,
                 message: 'An entry with this service number already exists'
@@ -54,6 +62,7 @@ exports.createOfficer = async (req, res) => {
             .get();
 
         if (!emailSnapshot.empty) {
+            console.log('Duplicate email detected:', req.body.emailAddress);
             return res.status(400).json({
                 success: false,
                 message: 'An entry with this email already exists'
@@ -75,6 +84,8 @@ exports.createOfficer = async (req, res) => {
         const createdDoc = await docRef.get();
         const officer = { id: createdDoc.id, ...createdDoc.data() };
 
+        console.log('Officer created successfully:', officer.id);
+        
         res.status(201).json({
             success: true,
             message: 'Officer data submitted successfully',
@@ -82,7 +93,11 @@ exports.createOfficer = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error creating officer:', error);
+        console.error('Error creating officer:', {
+            message: error.message,
+            stack: error.stack,
+            code: error.code
+        });
         res.status(500).json({
             success: false,
             message: 'Error submitting officer data',
